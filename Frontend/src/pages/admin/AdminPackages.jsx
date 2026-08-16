@@ -172,8 +172,8 @@ const AdminPackages = () => {
       tourStartDate: pkg.tourStartDate || "",
       tourEndDate: pkg.tourEndDate || "",
       rating: String(pkg.rating || "4.5"),
-      tourStartDate: pkg.tourStartDate || "",
-      tourEndDate: pkg.tourEndDate || "",
+      // tourStartDate: pkg.tourStartDate || "",
+      // tourEndDate: pkg.tourEndDate || "",
     });
     setImagePreview(getImageSrc(pkg) || "");
     setImageFile(null);

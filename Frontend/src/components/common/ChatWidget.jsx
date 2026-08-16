@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User, Plane } from 'lucide-react';
-import axiosInstance from '../api/axios';
+import axiosInstance from '../../api/axios';
 
 const SUGGESTED_QUESTIONS = [
   "Which package is best for a beach trip?",
