@@ -1,25 +1,19 @@
-// Gray pulse placeholder — matches PackageCard's layout exactly so the page
-// doesn't "jump" once real content replaces it.
 const PackageCardSkeleton = () => (
-  <div className="glass-card overflow-hidden flex flex-col animate-pulse">
-    {/* Image */}
-    <div className="w-full h-48 sm:h-44 md:h-48 bg-slate-200" />
-
-    {/* Body */}
-    <div className="p-4 flex flex-col flex-1 gap-2.5">
-      <div className="h-3 w-20 bg-slate-200 rounded-full" />
-      <div className="h-4 w-4/5 bg-slate-200 rounded-full" />
-      <div className="h-4 w-3/5 bg-slate-200 rounded-full mb-1" />
-
-      <div className="flex items-center gap-3">
-        <div className="h-3 w-16 bg-slate-200 rounded-full" />
-        <div className="h-3 w-16 bg-slate-200 rounded-full" />
+  <div className="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-sky-100 bg-white shadow-[0_14px_36px_rgba(11,23,40,0.08)] animate-pulse">
+    <div className="aspect-[16/10] w-full bg-slate-200" />
+    <div className="flex flex-1 flex-col p-4 sm:p-5">
+      <div className="mb-3 h-3 w-2/5 rounded-full bg-slate-200" />
+      <div className="mb-2 h-5 w-4/5 rounded-full bg-slate-200" />
+      <div className="mb-4 h-5 w-3/5 rounded-full bg-slate-200" />
+      <div className="grid grid-cols-2 gap-2">
+        {[0, 1, 2, 3].map((item) => (
+          <div key={item} className="h-16 rounded-xl bg-sky-50" />
+        ))}
       </div>
-
-      <div className="flex-1" />
-      <div className="flex items-center justify-between pt-3 border-t border-sky-100 mt-2">
-        <div className="h-5 w-20 bg-slate-200 rounded-full" />
-        <div className="h-8 w-24 bg-slate-200 rounded-full" />
+      <div className="mt-3 h-8 rounded-lg bg-emerald-50" />
+      <div className="mt-auto flex items-end justify-between border-t border-sky-100 pt-4">
+        <div className="h-6 w-24 rounded-full bg-slate-200" />
+        <div className="h-10 w-24 rounded-full bg-slate-200" />
       </div>
     </div>
   </div>
