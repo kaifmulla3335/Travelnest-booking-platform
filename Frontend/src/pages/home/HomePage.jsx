@@ -249,7 +249,7 @@ const HeroSection = ({
   handleSearch,
   siteName,
 }) => (
-  <section className="relative min-h-[88vh] sm:min-h-[92vh] flex flex-col items-center justify-center px-4 sm:px-5 text-center overflow-hidden pt-6 sm:pt-0 bg-slate-800">
+  <section className="travelnest-hero relative flex flex-col items-center justify-center overflow-hidden bg-[#0B1728] px-4 py-12 text-center sm:px-5 sm:py-16">
     <video
       className="hero-background-video absolute inset-0 w-full h-full object-cover pointer-events-none"
       autoPlay
@@ -262,12 +262,12 @@ const HeroSection = ({
     >
       <source src="https://res.cloudinary.com/dbnn37yfb/video/upload/v1791912682/nature_vedio_background_cj8vjq.mp4" type="video/mp4" />
     </video>
-    <div className="absolute inset-0 bg-slate-950/60 pointer-events-none" />
+    <div className="hero-video-overlay absolute inset-0 pointer-events-none" />
 
-    <div className="relative z-10 max-w-3xl w-full">
+    <div className="relative z-10 mx-auto w-full max-w-5xl">
       {/* ── Shine badge — compact on mobile ── */}
-      <div className="inline-flex mb-4 sm:mb-6 cursor-default select-none">
-        <div className="relative overflow-hidden bg-slate-950/40 backdrop-blur-md border border-white/30 rounded-full px-3 sm:px-5 py-1.5 sm:py-2 shadow-md">
+      <div className="mb-5 inline-flex cursor-default select-none sm:mb-7">
+        <div className="relative overflow-hidden rounded-full border border-white/25 bg-[#0B1728]/45 px-3 py-1.5 shadow-sm backdrop-blur-sm sm:px-5 sm:py-2">
           <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
             <div
               className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent -translate-x-full"
@@ -286,18 +286,13 @@ const HeroSection = ({
 
       {/* ── Heading — tighter on mobile ── */}
       <h1
-        className="font-display font-bold text-white drop-shadow-lg leading-tight mb-3 sm:mb-5
-        text-3xl sm:text-5xl md:text-6xl lg:text-7xl"
+        className="hero-heading mx-auto mb-4 max-w-5xl font-display font-bold text-white sm:mb-5"
       >
         Discover Your Next
         <br />
-        <span className="relative inline-block">
+        <span className="relative inline-block max-w-full">
           <span
-            className="bg-gradient-to-r from-sky-200 via-white to-sky-200 bg-clip-text text-transparent"
-            style={{
-              backgroundSize: "200% auto",
-              animation: "gradShift 4s ease infinite",
-            }}
+            className="text-sky-200"
           >
             Dream Destination
           </span>
@@ -306,7 +301,7 @@ const HeroSection = ({
       </h1>
 
       {/* ── Subtext — shorter on mobile ── */}
-      <p className="text-white/90 drop-shadow-md text-sm sm:text-base md:text-lg mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto px-2">
+      <p className="mx-auto mb-7 max-w-xl px-2 text-sm leading-relaxed text-white/95 drop-shadow-md sm:mb-9 sm:text-base md:text-lg">
         From Himalayan peaks to tropical shores — {siteName} curates
         unforgettable journeys for every kind of traveler.
       </p>
@@ -314,27 +309,22 @@ const HeroSection = ({
       {/* ── Search bar — properly sized ── */}
       <form
         onSubmit={handleSearch}
-        className="flex items-center bg-white/85 backdrop-blur-md border border-sky-200/80 rounded-full
-          px-3 sm:px-5 py-1.5 sm:py-2
-          max-w-sm sm:max-w-md mx-auto mb-8 sm:mb-12
-          shadow-lg shadow-sky-100/50"
+        className="hero-search-form mx-auto mb-9 flex w-full max-w-lg items-center rounded-full border border-white/70 bg-white/95 p-2 shadow-[0_8px_28px_rgba(11,23,40,0.18)] focus-within:ring-2 focus-within:ring-sky-300 focus-within:ring-offset-2 focus-within:ring-offset-[#0B1728] sm:mb-12"
       >
-        <Search size={15} className="text-slate-400 mr-2 flex-shrink-0" />
-        <input
-          type="text"
-          placeholder="Search destinations..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-transparent outline-none text-slate-700 text-sm placeholder-slate-400 min-w-0"
-        />
+        <div className="hero-search-field flex min-w-0 flex-1 items-center px-2 sm:px-3">
+          <Search size={17} aria-hidden="true" className="mr-2 flex-shrink-0 text-slate-600" />
+          <input
+            type="text"
+            aria-label="Search destinations"
+            placeholder="Search destinations..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="min-w-0 w-full bg-transparent text-sm text-slate-800 placeholder-slate-500 outline-none"
+          />
+        </div>
         <button
           type="submit"
-          className="flex-shrink-0 ml-2
-            bg-gradient-to-r from-sky-500 to-sky-600
-            text-white text-xs sm:text-sm font-semibold
-            px-4 sm:px-5 py-2 sm:py-2.5
-            rounded-full shadow-sm hover:shadow-md hover:scale-105
-            transition-all duration-200 whitespace-nowrap"
+          className="hero-search-button ml-2 min-h-11 flex-shrink-0 whitespace-nowrap rounded-full bg-sky-600 px-5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700"
         >
           Explore
         </button>
@@ -343,8 +333,8 @@ const HeroSection = ({
       {/* ── Stats — 2x2 grid on small mobile, row on larger ── */}
       <div
         className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center
-        gap-4 sm:gap-x-10 md:gap-x-14
-        px-4 sm:px-0"
+        gap-x-3 gap-y-5 sm:gap-x-10 md:gap-x-14
+        px-2 sm:px-0"
       >
         {STATS.map((stat) => (
           <StatItem key={stat.label} stat={stat} />
@@ -352,7 +342,7 @@ const HeroSection = ({
       </div>
 
       {/* Scroll hint — hide on very small screens */}
-      <div className="hidden sm:flex mt-10 flex-col items-center gap-1.5 opacity-80">
+      <div className="mt-9 hidden flex-col items-center gap-1.5 opacity-75 sm:flex">
         <span className="text-xs text-white font-medium">
           Scroll to explore
         </span>
@@ -366,8 +356,55 @@ const HeroSection = ({
     </div>
 
     <style>{`
+      .travelnest-hero {
+        min-height: calc(100vh - 4rem);
+        min-height: calc(100svh - 4rem);
+      }
+      .hero-background-video { object-position: center 48%; }
+      .hero-video-overlay {
+        background: linear-gradient(180deg,
+          rgba(11, 23, 40, .32) 0%,
+          rgba(11, 23, 40, .56) 38%,
+          rgba(11, 23, 40, .54) 65%,
+          rgba(11, 23, 40, .78) 100%);
+      }
+      .hero-heading {
+        font-size: clamp(1.875rem, 6.1vw, 5rem);
+        line-height: 1.12;
+        text-shadow: 0 2px 14px rgba(11, 23, 40, .35);
+        overflow-wrap: normal;
+      }
+      .hero-search-field { min-height: 2.75rem; }
+      @supports ((backdrop-filter: blur(14px)) or (-webkit-backdrop-filter: blur(14px))) {
+        @media (min-width: 640px) {
+          .hero-search-form {
+            background: rgba(255, 255, 255, .92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+          }
+        }
+      }
+      @media (max-width: 767px) {
+        .hero-background-video { object-position: 56% center; }
+      }
+      @media (max-width: 379px) {
+        .hero-search-form { flex-direction: column; border-radius: 1rem; }
+        .hero-search-field { width: 100%; }
+        .hero-search-button { width: 100%; margin: .5rem 0 0; }
+      }
+      @media (max-width: 359px) {
+        .travelnest-hero { justify-content: flex-start; padding-top: 3rem; padding-bottom: 6rem; }
+        .hero-search-form { margin-bottom: 1.5rem; }
+      }
+      @media (max-height: 520px) and (orientation: landscape) {
+        .travelnest-hero { padding-top: 2rem; padding-bottom: 2rem; }
+      }
       @media (prefers-reduced-motion: reduce) {
         .hero-background-video { display: none; }
+        .travelnest-hero *, .travelnest-hero *::before, .travelnest-hero *::after {
+          animation: none !important;
+          transition-duration: .01ms !important;
+        }
       }
       @keyframes badgeShine {
         0%   { transform: translateX(-100%); }
@@ -381,10 +418,6 @@ const HeroSection = ({
       @keyframes scrollDot {
         0%, 100% { transform: translateY(0); opacity: 1; }
         50%       { transform: translateY(8px); opacity: 0.3; }
-      }
-      @keyframes gradShift {
-        0%, 100% { background-position: 0% center; }
-        50%       { background-position: 100% center; }
       }
     `}</style>
   </section>
