@@ -230,12 +230,12 @@ const StatItem = ({ stat }) => {
   return (
     <div ref={ref} className="text-center">
       {/* Divider line above on mobile grid */}
-      <div className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-sky-600 tabular-nums leading-none">
+      <div className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-white tabular-nums leading-none drop-shadow-md">
         {stat.prefix}
         {display}
         {stat.suffix}
       </div>
-      <div className="text-[11px] sm:text-xs text-slate-400 mt-1 font-medium">
+      <div className="text-[11px] sm:text-xs text-white/85 mt-1 font-medium">
         {stat.label}
       </div>
     </div>
@@ -249,24 +249,32 @@ const HeroSection = ({
   handleSearch,
   siteName,
 }) => (
-  <section className="relative min-h-[88vh] sm:min-h-[92vh] flex flex-col items-center justify-center px-4 sm:px-5 text-center overflow-hidden pt-6 sm:pt-0">
-    {/* Background blobs */}
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-0 right-0 w-56 sm:w-80 md:w-[500px] h-56 sm:h-80 md:h-[500px] bg-sky-200/50 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 w-44 sm:w-64 md:w-96 h-44 sm:h-64 md:h-96 bg-sky-100/60 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
-    </div>
+  <section className="relative min-h-[88vh] sm:min-h-[92vh] flex flex-col items-center justify-center px-4 sm:px-5 text-center overflow-hidden pt-6 sm:pt-0 bg-slate-800">
+    <video
+      className="hero-background-video absolute inset-0 w-full h-full object-cover pointer-events-none"
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-hidden="true"
+      tabIndex={-1}
+    >
+      <source src="https://res.cloudinary.com/dbnn37yfb/video/upload/v1791912682/nature_vedio_background_cj8vjq.mp4" type="video/mp4" />
+    </video>
+    <div className="absolute inset-0 bg-slate-950/60 pointer-events-none" />
 
     <div className="relative z-10 max-w-3xl w-full">
       {/* ── Shine badge — compact on mobile ── */}
       <div className="inline-flex mb-4 sm:mb-6 cursor-default select-none">
-        <div className="relative overflow-hidden bg-white/70 backdrop-blur-md border border-sky-200/80 rounded-full px-3 sm:px-5 py-1.5 sm:py-2 shadow-md shadow-sky-100/40">
+        <div className="relative overflow-hidden bg-slate-950/40 backdrop-blur-md border border-white/30 rounded-full px-3 sm:px-5 py-1.5 sm:py-2 shadow-md">
           <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
             <div
               className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent -translate-x-full"
               style={{ animation: "badgeShine 2.5s ease-in-out infinite" }}
             />
           </div>
-          <span className="relative flex items-center gap-1.5 text-sky-600 text-[11px] sm:text-xs font-semibold">
+          <span className="relative flex items-center gap-1.5 text-white text-[11px] sm:text-xs font-semibold">
             <span style={{ animation: "starPulse 2s ease-in-out infinite" }}>
               ⭐
             </span>
@@ -278,14 +286,14 @@ const HeroSection = ({
 
       {/* ── Heading — tighter on mobile ── */}
       <h1
-        className="font-display font-bold text-slate-800 leading-tight mb-3 sm:mb-5
+        className="font-display font-bold text-white drop-shadow-lg leading-tight mb-3 sm:mb-5
         text-3xl sm:text-5xl md:text-6xl lg:text-7xl"
       >
         Discover Your Next
         <br />
         <span className="relative inline-block">
           <span
-            className="bg-gradient-to-r from-sky-500 via-sky-400 to-blue-600 bg-clip-text text-transparent"
+            className="bg-gradient-to-r from-sky-200 via-white to-sky-200 bg-clip-text text-transparent"
             style={{
               backgroundSize: "200% auto",
               animation: "gradShift 4s ease infinite",
@@ -298,7 +306,7 @@ const HeroSection = ({
       </h1>
 
       {/* ── Subtext — shorter on mobile ── */}
-      <p className="text-slate-500 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto px-2">
+      <p className="text-white/90 drop-shadow-md text-sm sm:text-base md:text-lg mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto px-2">
         From Himalayan peaks to tropical shores — {siteName} curates
         unforgettable journeys for every kind of traveler.
       </p>
@@ -344,13 +352,13 @@ const HeroSection = ({
       </div>
 
       {/* Scroll hint — hide on very small screens */}
-      <div className="hidden sm:flex mt-10 flex-col items-center gap-1.5 opacity-40">
-        <span className="text-xs text-slate-400 font-medium">
+      <div className="hidden sm:flex mt-10 flex-col items-center gap-1.5 opacity-80">
+        <span className="text-xs text-white font-medium">
           Scroll to explore
         </span>
-        <div className="w-5 h-8 border-2 border-slate-300 rounded-full flex items-start justify-center pt-1.5">
+        <div className="w-5 h-8 border-2 border-white/80 rounded-full flex items-start justify-center pt-1.5">
           <div
-            className="w-1 h-2 bg-slate-400 rounded-full"
+            className="w-1 h-2 bg-white rounded-full"
             style={{ animation: "scrollDot 1.5s ease-in-out infinite" }}
           />
         </div>
@@ -358,6 +366,9 @@ const HeroSection = ({
     </div>
 
     <style>{`
+      @media (prefers-reduced-motion: reduce) {
+        .hero-background-video { display: none; }
+      }
       @keyframes badgeShine {
         0%   { transform: translateX(-100%); }
         40%  { transform: translateX(300%); }
