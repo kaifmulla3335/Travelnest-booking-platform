@@ -1,6 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User, Plane } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import axiosInstance from '../../api/axios';
+
+const markdownComponents = {
+  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+  ul: ({ children }) => <ul className="mb-2 ml-4 list-disc space-y-1 last:mb-0">{children}</ul>,
+  ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal space-y-1 last:mb-0">{children}</ol>,
+  a: ({ children, ...props }) => <a {...props} className="text-sky-700 underline break-all" target="_blank" rel="noopener noreferrer">{children}</a>,
+  table: ({ children }) => <div className="my-2 max-w-full overflow-x-auto"><table className="w-full min-w-max text-xs">{children}</table></div>,
+  th: ({ children }) => <th className="border-b border-slate-200 px-2 py-1 text-left font-semibold">{children}</th>,
+  td: ({ children }) => <td className="border-b border-slate-100 px-2 py-1 align-top">{children}</td>,
+};
 
 const SUGGESTED_QUESTIONS = [
   "Which package is best for a beach trip?",
@@ -14,7 +26,7 @@ const ChatWidget = () => {
   const [messages,  setMessages]  = useState([
     {
       role: 'assistant',
-      text: "Hi! I'm TravelNest AI 🌏 I can help you find the perfect travel package, answer questions about bookings, or give travel tips. How can I help you today?",
+      text: "Hi! I'm TravelNest AI 🌏 Ask me about packages, travel plans, studying, or anything else. How can I help you today?",
     }
   ]);
   const [input,     setInput]     = useState('');
@@ -37,17 +49,21 @@ const ChatWidget = () => {
     const userText = (text || input).trim();
     if (!userText || loading) return;
 
+    const history = messages.slice(1).filter(msg => !msg.isError).slice(-8)
+      .map(msg => ({ role: msg.role, content: msg.text }));
+
     setInput('');
     setShowSuggestions(false);
     setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setLoading(true);
 
     try {
-      const res = await axiosInstance.post('/chat/message', { message: userText });
+      const res = await axiosInstance.post('/chat/message', { message: userText, history });
       setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
     } catch (error) {
       setMessages(prev => [...prev, {
         role: 'assistant',
+        isError: true,
         text: error.response?.data?.message || "The AI assistant is temporarily unavailable. Please try again in a moment!",
       }]);
     } finally {
@@ -85,11 +101,11 @@ const ChatWidget = () => {
       )}
 
       {/* ── Chat panel ── */}
-      <div className={`fixed bottom-24 right-5 z-50 w-80 sm:w-96 rounded-2xl shadow-2xl
+      <div className={`fixed bottom-24 right-5 z-50 w-[calc(100vw-2.5rem)] sm:w-96 rounded-2xl shadow-2xl
         flex flex-col overflow-hidden border border-sky-100 bg-white
         transition-all duration-300 origin-bottom-right
         ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-90 opacity-0 pointer-events-none'}`}
-        style={{ maxHeight: '520px' }}
+        style={{ maxHeight: 'min(520px, calc(100dvh - 7rem))' }}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-sky-500 to-sky-600 px-4 py-3 flex items-center gap-3">
@@ -98,16 +114,16 @@ const ChatWidget = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-semibold text-sm leading-none">TravelNest AI</p>
-            <p className="text-sky-100 text-xs mt-0.5">Ask me anything about travel</p>
+            <p className="text-sky-100 text-xs mt-0.5">Ask me anything</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-sky-100 text-xs">Travel help</span>
+            <span className="text-sky-100 text-xs">Here to help</span>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50"
-          style={{ minHeight: '300px' }}>
+        <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3 bg-slate-50"
+          style={{ minHeight: 'min(300px, calc(100dvh - 15rem))' }}>
 
           {messages.map((msg, i) => (
             <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -122,11 +138,13 @@ const ChatWidget = () => {
               </div>
 
               {/* Bubble */}
-              <div className={`max-w-[78%] rounded-2xl px-3 py-2 text-sm leading-relaxed
+              <div className={`min-w-0 max-w-[86%] rounded-2xl px-3 py-2 text-sm leading-relaxed
                 ${msg.role === 'assistant'
-                  ? 'bg-white text-slate-800 shadow-sm border border-slate-100 rounded-tl-none'
+                  ? 'bg-white text-slate-800 shadow-sm border border-slate-100 rounded-tl-none break-words'
                   : 'bg-sky-500 text-white rounded-tr-none'}`}>
-                {msg.text}
+                {msg.role === 'assistant'
+                  ? <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{msg.text}</ReactMarkdown>
+                  : msg.text}
               </div>
             </div>
           ))}
@@ -175,7 +193,7 @@ const ChatWidget = () => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Ask about packages, travel tips..."
+              placeholder="Ask about trips, study, or anything..."
               disabled={loading}
               className="flex-1 resize-none rounded-xl border border-slate-200 px-3 py-2 text-sm
                 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-400

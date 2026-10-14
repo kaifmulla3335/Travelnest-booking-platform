@@ -19,7 +19,7 @@ public class ChatController {
     @PostMapping("/message")
     public ResponseEntity<Map<String, String>> chat(@RequestBody ChatMessage chatMessage) {
         try {
-            String reply = chatService.chat(chatMessage.getMessage());
+            String reply = chatService.chat(chatMessage.getMessage(), chatMessage.getHistory());
             return ResponseEntity.ok(Map.of("reply", reply));
         } catch (ChatService.ChatProviderException e) {
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)

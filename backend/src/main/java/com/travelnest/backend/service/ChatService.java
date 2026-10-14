@@ -1,5 +1,6 @@
 package com.travelnest.backend.service;
 
+import com.travelnest.backend.dto.request.ChatMessage;
 import com.travelnest.backend.entity.Package;
 import com.travelnest.backend.repository.PackageRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,20 +34,21 @@ public class ChatService {
         }
     }
 
-    public String chat(String userMessage) {
+    public String chat(String userMessage, List<ChatMessage.ChatTurn> history) {
         // ── Step 1: Fetch all packages from DB for context ──
         List<Package> packages = packageRepository.findAll();
         String packageContext = buildPackageContext(packages);
 
         // ── Step 2: Build system prompt with TravelNest context ──
         String systemPrompt = """
-                You are TravelNest AI, a friendly and knowledgeable travel assistant for the TravelNest booking platform.
+                You are TravelNest AI, a friendly and knowledgeable assistant for the TravelNest booking platform.
                 
                 Your job is to:
                 - Help users find the right travel package based on their budget, interests, and group size
                 - Answer questions about destinations, tour details, pricing, and booking process
                 - Give helpful travel tips and packing advice
                 - Explain the booking and cancellation policy clearly
+                - Answer general questions directly, including questions about school, studying, careers, and everyday topics
                 
                 AVAILABLE PACKAGES ON TRAVELNEST (use this to answer package-related questions):
                 """ + packageContext + """
@@ -58,9 +61,10 @@ public class ChatService {
                 - Once confirmed, user receives a QR-coded E-Ticket
                 
                 IMPORTANT RULES:
-                - Always be helpful, concise, and friendly
-                - If asked about packages, mention specific ones from the list above with prices
-                - If asked something outside travel/TravelNest scope, politely redirect
+                - Always be helpful, concise, and friendly. Answer the actual question, even if it is unrelated to travel.
+                - For TravelNest packages and policies, use only the facts above; do not invent packages, prices, availability, or policies.
+                - Use earlier messages for context. For a recommendation, suggest up to three matching packages with prices and a brief reason. If preferences are missing, offer a useful starting suggestion and ask at most one follow-up question.
+                - Format for a narrow mobile chat: short paragraphs or simple bullet lists. Do not use tables or pipe-separated rows. Use Markdown bold only when it improves scanning.
                 - Respond in the same language the user writes in (Hindi or English)
                 - Keep responses under 150 words unless a detailed itinerary is requested
                 """;
@@ -68,12 +72,23 @@ public class ChatService {
         // ── Step 3: Call Groq API ──
         RestClient restClient = RestClient.create();
 
+        List<Map<String, String>> conversation = new ArrayList<>();
+        conversation.add(Map.of("role", "system", "content", systemPrompt));
+        if (history != null) {
+            for (int i = Math.max(0, history.size() - 8); i < history.size(); i++) {
+                ChatMessage.ChatTurn turn = history.get(i);
+                if (turn == null || turn.getContent() == null || turn.getContent().isBlank()) continue;
+                String role = turn.getRole();
+                if (!"user".equals(role) && !"assistant".equals(role)) continue;
+                String content = turn.getContent();
+                conversation.add(Map.of("role", role, "content", content.substring(0, Math.min(content.length(), 1200))));
+            }
+        }
+        conversation.add(Map.of("role", "user", "content", userMessage));
+
         Map<String, Object> requestBody = Map.of(
                 "model", groqModel,
-                "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt),
-                        Map.of("role", "user",   "content", userMessage)
-                ),
+                "messages", conversation,
                 "max_tokens", 500,
                 "temperature", 0.7
         );
