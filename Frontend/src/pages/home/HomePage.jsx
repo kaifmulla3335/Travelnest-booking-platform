@@ -309,17 +309,17 @@ const HeroSection = ({
       {/* ── Search bar — properly sized ── */}
       <form
         onSubmit={handleSearch}
-        className="hero-search-form mx-auto mb-9 flex w-full max-w-lg items-center rounded-full border border-white/70 bg-white/95 p-2 shadow-[0_8px_28px_rgba(11,23,40,0.18)] focus-within:ring-2 focus-within:ring-sky-300 focus-within:ring-offset-2 focus-within:ring-offset-[#0B1728] sm:mb-12"
+        className="hero-search-form mx-auto mb-9 flex w-full max-w-lg items-center rounded-full border border-white/55 bg-white/45 p-2 shadow-[0_8px_28px_rgba(11,23,40,0.22)] focus-within:ring-2 focus-within:ring-sky-300 focus-within:ring-offset-2 focus-within:ring-offset-[#0B1728] sm:mb-12"
       >
         <div className="hero-search-field flex min-w-0 flex-1 items-center px-2 sm:px-3">
-          <Search size={17} aria-hidden="true" className="mr-2 flex-shrink-0 text-slate-600" />
+          <Search size={17} aria-hidden="true" className="mr-2 flex-shrink-0 text-slate-800" />
           <input
             type="text"
             aria-label="Search destinations"
             placeholder="Search destinations..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="min-w-0 w-full bg-transparent text-sm text-slate-800 placeholder-slate-500 outline-none"
+            className="min-w-0 w-full bg-transparent text-sm text-[#0B1728] placeholder:text-slate-800/80 outline-none"
           />
         </div>
         <button
@@ -374,11 +374,19 @@ const HeroSection = ({
         text-shadow: 0 2px 14px rgba(11, 23, 40, .35);
         overflow-wrap: normal;
       }
-      .hero-search-field { min-height: 2.75rem; }
-      @supports ((backdrop-filter: blur(14px)) or (-webkit-backdrop-filter: blur(14px))) {
-        @media (min-width: 640px) {
+      .hero-search-field {
+        min-height: 2.75rem;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, .4);
+      }
+      @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+        .hero-search-form {
+          background: rgba(255, 255, 255, .28);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+        }
+        @media (max-width: 639px) {
           .hero-search-form {
-            background: rgba(255, 255, 255, .92);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
           }
