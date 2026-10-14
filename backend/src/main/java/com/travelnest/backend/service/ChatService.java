@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,12 @@ public class ChatService {
 
     @Value("${groq.model}")
     private String groqModel;
+
+    public static class ChatProviderException extends RuntimeException {
+        public ChatProviderException(Throwable cause) {
+            super("AI provider unavailable", cause);
+        }
+    }
 
     public String chat(String userMessage) {
         // ── Step 1: Fetch all packages from DB for context ──
@@ -72,6 +79,10 @@ public class ChatService {
         );
 
         try {
+            if (groqApiKey == null || groqApiKey.isBlank()) {
+                throw new IllegalStateException("GROQ_API_KEY is not configured");
+            }
+
             Map response = restClient.post()
                     .uri(groqApiUrl)
                     .header("Authorization", "Bearer " + groqApiKey)
@@ -86,8 +97,13 @@ public class ChatService {
             return (String) message.get("content");
 
         } catch (Exception e) {
-            System.err.println("Groq API error: " + e.getMessage());
-            return "Sorry, I'm having trouble connecting right now. Please try again in a moment!";
+            if (e instanceof RestClientResponseException providerError) {
+                System.err.println("Groq API returned HTTP " + providerError.getStatusCode()
+                        + ": " + providerError.getResponseBodyAsString());
+            } else {
+                System.err.println("Groq API error: " + e.getMessage());
+            }
+            throw new ChatProviderException(e);
         }
     }
 

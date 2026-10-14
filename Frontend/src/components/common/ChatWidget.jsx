@@ -45,10 +45,10 @@ const ChatWidget = () => {
     try {
       const res = await axiosInstance.post('/chat/message', { message: userText });
       setMessages(prev => [...prev, { role: 'assistant', text: res.data.reply }]);
-    } catch {
+    } catch (error) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        text: "Sorry, I'm having trouble connecting right now. Please try again in a moment! 🙏",
+        text: error.response?.data?.message || "The AI assistant is temporarily unavailable. Please try again in a moment!",
       }]);
     } finally {
       setLoading(false);
@@ -101,8 +101,7 @@ const ChatWidget = () => {
             <p className="text-sky-100 text-xs mt-0.5">Ask me anything about travel</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sky-100 text-xs">Online</span>
+            <span className="text-sky-100 text-xs">Travel help</span>
           </div>
         </div>
 
@@ -196,7 +195,7 @@ const ChatWidget = () => {
                 : <Send size={15} className="text-white" />}
             </button>
           </div>
-          <p className="text-center text-xs text-slate-300 mt-2">Powered by Groq AI · LLaMA 3.3</p>
+          <p className="text-center text-xs text-slate-300 mt-2">Powered by Groq AI</p>
         </div>
       </div>
     </>

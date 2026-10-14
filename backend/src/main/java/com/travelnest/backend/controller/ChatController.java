@@ -4,6 +4,7 @@ import com.travelnest.backend.dto.request.ChatMessage;
 import com.travelnest.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -17,7 +18,12 @@ public class ChatController {
     // Public endpoint — no login needed to use the chatbot
     @PostMapping("/message")
     public ResponseEntity<Map<String, String>> chat(@RequestBody ChatMessage chatMessage) {
-        String reply = chatService.chat(chatMessage.getMessage());
-        return ResponseEntity.ok(Map.of("reply", reply));
+        try {
+            String reply = chatService.chat(chatMessage.getMessage());
+            return ResponseEntity.ok(Map.of("reply", reply));
+        } catch (ChatService.ChatProviderException e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(Map.of("message", "The AI assistant is temporarily unavailable."));
+        }
     }
 }
