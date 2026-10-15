@@ -70,6 +70,14 @@ const PaymentPage = () => {
       });
       const { orderId, amount, currency, keyId } = orderRes.data;
 
+      // A package price may have changed since the booking summary was saved.
+      // Never open checkout for an amount different from the one shown here.
+      if (amount !== Math.round(total * 100)) {
+        setError('The package price has changed. Please return to booking and review the updated total.');
+        setLoading(false);
+        return;
+      }
+
       // Step 2: Open Razorpay Checkout widget
       const options = {
         key: keyId,
@@ -143,15 +151,14 @@ const PaymentPage = () => {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-5 py-6 sm:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8 items-start">
 
           {/* ── Payment Panel ── */}
-          <div className="lg:col-span-2 glass-card p-5 sm:p-8">
+          <div className="lg:col-span-2 glass-card p-5 sm:p-8 min-w-0">
             <h2 className="font-semibold text-slate-800 text-base sm:text-lg mb-5">Complete Your Payment</h2>
 
-            <p className="text-slate-500 text-sm leading-relaxed mb-6">
-              Click the button below to open the secure Razorpay checkout. You can pay using
-              Credit/Debit Card, UPI, Net Banking, or Wallets.
+            <p className="text-slate-500 text-sm leading-relaxed mb-5">
+              Continue to Razorpay to choose your payment method and complete your booking securely.
             </p>
 
             {/* Error message */}
@@ -161,13 +168,10 @@ const PaymentPage = () => {
               </div>
             )}
 
-            {/* Payment methods preview (visual only — Razorpay handles selection) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              {['💳 Card', '📱 UPI', '🏦 Net Banking', '👛 Wallets'].map(m => (
-                <div key={m} className="border border-sky-100 rounded-xl px-3 py-3 text-center text-xs font-medium text-slate-600 bg-sky-50/50">
-                  {m}
-                </div>
-              ))}
+            {/* Available methods are chosen inside Razorpay Checkout. */}
+            <div className="rounded-xl border border-sky-100 bg-sky-50/50 px-4 py-4 mb-6">
+              <p className="text-xs font-semibold text-slate-700 mb-2">Payment methods available in Razorpay</p>
+              <p className="text-sm leading-relaxed text-slate-600">Card · UPI · Net Banking · Wallets</p>
             </div>
 
             {/* Security note */}
@@ -178,17 +182,17 @@ const PaymentPage = () => {
 
             {/* Pay button */}
             <button onClick={handlePay} disabled={loading}
-              className="btn-primary w-full py-3.5 text-sm font-semibold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60">
+              className="btn-primary w-full min-h-12 px-4 py-3.5 text-sm font-semibold rounded-xl flex items-center justify-center gap-2 text-center leading-snug disabled:opacity-60">
               {loading ? (
                 <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Opening Razorpay...</>
               ) : (
-                <><Lock size={14} /> Pay ₹{total.toLocaleString('en-IN')} — Powered by Razorpay</>
+                <><Lock size={14} className="shrink-0" /> Continue to pay ₹{total.toLocaleString('en-IN')}</>
               )}
             </button>
           </div>
 
           {/* ── Order Summary ── */}
-          <div className="glass-card p-5 h-fit lg:sticky lg:top-24">
+          <div className="glass-card p-5 h-fit min-w-0 lg:sticky lg:top-24">
             <h3 className="font-semibold text-slate-800 mb-4">Order Summary</h3>
 
             {pkg && (
